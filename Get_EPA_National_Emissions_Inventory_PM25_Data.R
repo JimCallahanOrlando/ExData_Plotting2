@@ -32,7 +32,7 @@ getwd()
 ### What is the date? (useful for bibliography: retrieved URL on date)
 dateDownloaded <- date()
 
-### Get Household Power Consumption Data Zip file
+### Get National Emissions Inventory Zip file
 url <- "https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip"
 download.file(url,'~\\GitHub\\ExData_Plotting2\\.data\\exdata%2Fdata%2FNEI_data.zip', mode="wb")
 
