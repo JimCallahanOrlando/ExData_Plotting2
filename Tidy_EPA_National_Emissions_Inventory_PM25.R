@@ -22,137 +22,92 @@ dateLoadedToR <- date()
 NEI <- readRDS(".data/summarySCC_PM25.rds")
 SCC <- readRDS(".data/Source_Classification_Code.rds")
 
-
 str(NEI)
-summary(NEI)
-
-str(SCC)
-
-### SUBSET BY Date2: "We will only be using data from the dates 2007-02-01 and 2007-02-02."
-### If using just dates we can be inclusive; if using date-times have to be less than next day.
-# DateRange <- household_power_consumption$Date2 >= "2007-02-01" &  household_power_consumption$Date2 <= "2007-02-02"
-# HH_Power_DateSlice <- household_power_consumption[DateRange, ]
-
+# Convert all of the NEI columns except Emissions to factor.
+NEI$fips      <- factor(NEI$fips)
+NEI$SCC       <- factor(NEI$SCC)
+NEI$Pollutant <- factor(NEI$Pollutant)
+NEI$type      <- factor(NEI$type)
+NEI$year      <- factor(NEI$year)
+str(NEI)
 
 
-### attach(HH_Power_DateSlice) -- alternative to with()
+# Number of oberservations for each year.
+table(NEI$year)
 
-### Assignment: "Construct the plot and save it to a PNG file with a width of 480 pixels and a height of 480 pixels."
-### PNG commands from website:     
-###     http://rfunction.com/archives/812
-### png(Plot1.png, width=480, height=480)
-### PLOT GOES HERE
-### dev.off()
+# Question 1:
+# Have total emissions from PM2.5 decreased in the United States 
+# from 1999 to 2008? 
+# Using the base plotting system, make a plot showing the total PM2.5 emission 
+# from all sources for each of the years 1999, 2002, 2005, and 2008.
 
-# restore default of one plot
-# par(cex = .75, mfrow = c(1, 1), mar = c(4, 4, 2, 1))
+# Summarize NEI$Emissions by NEI$year
+NEI$year <- factor(NEI$year)
+Year <- levels(NEI$year)
+summary(NEI$Emissions)
 
-### Plot 1: Quick and dirty (Move to separate file Plot1.R -- save output in Plot1.png)
-# with(HH_Power_DateSlice, 
-#     hist(Global_active_power, col = "red", 
-#          main = "Global Active Power", 
-#          xlab = "Global Active Power (kilowatts)" )
-#     )
+par(mar = c(4, 4, 4, 1) )
+bp <- boxplot(log10(Emissions) ~ year, NEI, 
+              xlab = "Year", ylab = "PM 2.5 readings (base 10 log scale)", range = 1.5)
+title(main = "Have U.S. Emissions  Decreased \n from 1999 to 2008?" )
 
-
-### Plot 2: Quick and dirty
-# with(HH_Power_DateSlice, 
-#     plot(DateTime2, Global_active_power, 
-#          main = "", 
-#          xlab = "",
-#          ylab = "Global Active Power (kilowatts)",
-#          type = "l")
-#     )
-
-
-### Plot 3: Quick and dirty
-# plot(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_1, type = "n" ,
-#     main = "", 
-#     xlab = "",
-#     ylab = "Energy sub metering"
-#     )
-# legend("topright",
-#       col = c("black", "red", "blue"),
-#       lty = 1,
-#       legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3") 
-#       )
-# lines(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_1, col = "black" )
-# lines(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_2, col = "red"   )
-# lines(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_3, col = "blue"  )
+EmissionsByYear <- tapply(NEI$Emissions, NEI$year, sum)
+EmissionsByYear <- as.data.frame(EmissionsByYear)
+EmissionsByYear <- cbind(Year, EmissionsByYear)
+plot(EmissionsByYear)
+title(main = "Have U.S. Emissions  Decreased \n from 1999 to 2008?" )
 
 
 
+# Question 2:
+# Have total emissions from PM2.5 decreased in the Baltimore City, 
+# Maryland (fips == "24510") from 1999 to 2008? 
+# Use the base plotting system to make a plot answering this question.
+NEI$year <- factor(NEI$year)
+Year <- levels(NEI$year)
+BaltimoreEI <- NEI[NEI$fips == "24510", ]
+
+par(mar = c(4, 4, 4, 1) )
+bp <- boxplot(log10(Emissions) ~ year, BaltimoreEI, 
+              xlab = "Year", ylab = "PM 2.5 readings (base 10 log scale)", range = 1.5)
+title(main = "Have Baltimore Emissions  Decreased \n from 1999 to 2008?" )
 
 
-### This did NOT work... lecture used type = n; followed by points(), so I will try lines()
-### matlines(as.matrix(cbind(HH_Power_DateSlice$DateTime2,
-###                         HH_Power_DateSlice$DateTime2,
-###                         HH_Power_DateSlice$DateTime2)
-###                   ),
-###          as.matrix(cbind(HH_Power_DateSlice$Sub_metering_1,
-###                          HH_Power_DateSlice$Sub_metering_2,
-###                          HH_Power_DateSlice$Sub_metering_3)
-###                    ), 
-###          type = "l",
-###          lty = 1,
-###          col = c("black", "red", "blue"),
-###          main = "",
-###          xlab = "",
-###          ylab = "Energy sub metering")
-          
-          
+BaltimoreEmissionsByYear <- tapply(BaltimoreEI$Emissions, BaltimoreEI$year, sum)
+BaltimoreEmissionsByYear <- as.data.frame(BaltimoreEmissionsByYear)
+BaltimoreEmissionsByYear <- cbind(Year, BaltimoreEmissionsByYear)
+plot(BaltimoreEmissionsByYear)
+title(main = "Have Baltimore Emissions  Decreased \n from 1999 to 2008?" )
 
 
+# Question 3:
+# Of the four types of sources indicated by the type 
+# (point, nonpoint, onroad, nonroad) variable, which of these four sources 
+# have seen decreases in emissions from 1999–2008 for Baltimore City? 
+# Which have seen increases in emissions from 1999–2008? 
+# Use the ggplot2 plotting system to make a plot answer this question.
 
-### Plot 4: Quick and dirty
+# Question 4:
+# Across the United States, how have emissions from coal combustion-related 
+# sources changed from 1999–2008?
 
-# Four Plots on a Page
+# How does one identify "coal combustion-related?
 
-# par(mfrow = c(2, 2), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
-# par(cex = .20, mfrow = c(2, 2), mar = c(5, 5, 5, 1) )
+# Question 5:
+# How have emissions from motor vehicle sources changed 
+# from 1999–2008 in Baltimore City?
 
-# Subplot 1
-# plot(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Global_active_power, 
-#      main = "", 
-#     xlab = "",
-#     ylab = "Global Active Power",
-#     type = "l")
-#    
-# Subplot 2
-# plot(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Voltage, 
-#     main = "", 
-#     xlab = "datetime",
-#     ylab = "Voltage",
-#     type = "l")
-    
-# Subplot 3
-# plot(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_1, type = "n" ,
-#     main = "", 
-#     xlab = "",
-#     ylab = "Energy Sub metering"
-# )
-# legend("topright",
-#       col = c("black", "red", "blue"),
-#       lty = 1,
-#       legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3") 
-# )
-# lines(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_1, col = "black" )
-# lines(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_2, col = "red"   )
-# lines(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Sub_metering_3, col = "blue"  )
+# NOTE: For "motor vehicle sources" may have to merge NEI and SCC on SCC
 
 
-# Subplot 4
-# plot(HH_Power_DateSlice$DateTime2, HH_Power_DateSlice$Global_reactive_power,
-#          main = "", 
-#         xlab = "datetime",
-#         ylab = "Global_reactive_power",
-#         type = "h")
+# Question 6:
+# Compare emissions from motor vehicle sources in Baltimore City with emissions 
+# from motor vehicle sources in Los Angeles County, California (fips == "06037"). 
+# Which city has seen greater changes over time in motor vehicle emissions?
 
-     
-# restore default of one plot
-# par(cex = .75, mfrow = c(1, 1), mar = c(4, 4, 2, 1))
+# NOTE: For "motor vehicle sources" may have to merge NEI and SCC on SCC
+LosAnglesEI <- NEI[NEI$fips == "06037", ]
 
-### Need to split into one program for each of four plots, commit to Git
-### and push to GitHub.
+
 
 ### End of: Tidy_EPA_National_Emissions_Inventory_Data.R
