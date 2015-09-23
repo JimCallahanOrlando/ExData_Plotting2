@@ -45,8 +45,9 @@ summary(NEI$Emissions)
 par(mar = c(4, 4, 4, 1) )
 # With Logs (extremely wide range of values; log scale needed to reduce spread)
 # See Winston Chang's "R Graphics Cookbook" pages 327-329 for use of "ppi"
+# reduced size to 3.5*ppi -- so whole graph would show in Coursera window.
 ppi <- 150
-png(filename = "plot1.png", height = 4*ppi, width=4*ppi, units = "px", pointsize = 14)
+png(filename = "plot1.png", height = 3.5*ppi, width=3.5*ppi, units = "px", pointsize = 14)
 boxplot(log10(Emissions) ~ year, NEI, 
             xlab = "Year", ylab = "PM 2.5 readings (base 10 log scale)")
             title(main = "U.S. Particulate Matter 2.5 Emissions  \nDecreased from 1999 to 2008")
