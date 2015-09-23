@@ -59,14 +59,20 @@ require(ggplot2)
 # This is same boxplot as above; need to add facets for "type"
 # BaltimoreEI$EmissionsLog10 <- log10(BaltimoreEI$Emissions)
 
-# HONOR CODE: "R Graphics Cookbook" by Winston Chang
+# HONOR CODE: "R Graphics Cookbook" by Winston Chang for PNG parameters and qplot
 # Argument to log must be in quotes: log = "y"
 par(mar = c(4, 4, 4, 1) )
+
+ppi <- 150
+png(filename = "plot3.png", height = 3.5*ppi, width=3.5*ppi, units = "px", pointsize = 14)
+
 bp2 <- qplot( data = BaltimoreEI, x = year, y = Emissions, log = "y" )  + geom_boxplot()
 
 # Add facets (note: tilda, "~" is required!)
 bp3 <- bp2 + facet_wrap( ~ type ) + ggtitle("Baltimore Particulate Matter 2.5 Emission Trends \nBy Source")
-bp3 <- bp3 + ylab("Emissions - log scale") + xlab("Year\nSource: US EPA Nation Emissions Inventory (NEI)")
+bp3 <- bp3 + ylab("Emissions - log scale") + xlab("Year\nSource: US EPA National Emissions Inventory (NEI)")
 bp3
+
+dev.off()
 
 #  End of Plot3.R

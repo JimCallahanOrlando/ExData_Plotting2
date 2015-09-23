@@ -40,8 +40,12 @@ Year <- levels(NEI$year)
 BaltimoreEI <- NEI[NEI$fips == "24510", ]
 
 par(mar = c(4, 4, 4, 1) )
-bp <- boxplot(log10(Emissions) ~ year, BaltimoreEI, 
+ppi <- 150
+png(filename = "plot2.png", height = 3.5*ppi, width=3.5*ppi, units = "px", pointsize = 14)
+
+boxplot(log10(Emissions) ~ year, BaltimoreEI, 
               xlab = "Year", ylab = "PM 2.5 readings (base 10 log scale)", range = 1.5)
 title(main = "Baltimore PM 2.5 Emissions \n Decreased from 1999 to 2008" )
 
+dev.off()
 #  End of Plot2.R
