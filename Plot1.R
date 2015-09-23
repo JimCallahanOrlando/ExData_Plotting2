@@ -2,8 +2,8 @@
 # PURPOSE:  Load EPA Air Pollution Data files into R AND draw plot 1
 
 # Set Directory to project directory for plots
-setwd("~/GitHub/ExData_Plotting2/")
-getwd()
+setwd("~/GitHub/ExData_Plotting2/")  # set
+getwd()                              # verify
 
 ## This first line will likely take a few seconds. Be patient!
 NEI <- readRDS(".data/summarySCC_PM25.rds")
@@ -44,10 +44,17 @@ summary(NEI$Emissions)
 
 par(mar = c(4, 4, 4, 1) )
 # With Logs (extremely wide range of values; log scale needed to reduce spread)
-bp <- boxplot(log10(Emissions) ~ year, NEI, 
+# See Winston Chang's "R Graphics Cookbook" pages 327-329 for use of "ppi"
+ppi <- 150
+png(filename = "plot1.png", height = 4*ppi, width=4*ppi, units = "px", pointsize = 14)
+boxplot(log10(Emissions) ~ year, NEI, 
             xlab = "Year", ylab = "PM 2.5 readings (base 10 log scale)")
             title(main = "U.S. Particulate Matter 2.5 Emissions  \nDecreased from 1999 to 2008")
-
+dev.off()            
+            
+# Plot1.png complete.
+#
+# Here are some alternate approaches
 #Without Logs
 # NEI <- NEI[NEI$Emissions < (20000), ] # omit known outliers
 # bp <- boxplot(Emissions ~ year, NEI, 
